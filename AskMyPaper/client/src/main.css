@@ -1,0 +1,10 @@
+html, body, #app {
+    height: 100%;
+    font-family: "Spectral", serif;
+    overflow: hidden;
+    --bg-color: #212121;
+    --fg-color: #2E2E2E;
+    --font-color: 255, 255, 255;
+    --accent-color: #838383;
+    background-color: var(--bg-color);
+}
