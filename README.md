@@ -90,7 +90,7 @@ This task focuses on multi-class news classification from both the **headline** 
 
 | Model Variant | Accuracy   |
 |---------------|------------|
-| TinyBERT      | **64.36%** |
+| TinyBERT      | **94.21%** |
 
 >TinyBERT was Used. DistilBERT or BERT Base would have performed significantly better. But due to computing deficiencies, Trained on TinyBERT
 ---
