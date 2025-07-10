@@ -1,4 +1,5 @@
 from langchain import hub
+from langchain.prompts import PromptTemplate
 from langchain_core.documents import Document
 from langgraph.graph import START, StateGraph
 from typing_extensions import List, TypedDict
@@ -28,7 +29,26 @@ urls = ["https://arxiv.org/pdf/1706.03762", "https://arxiv.org/pdf/1810.04805",
 index_documents(urls)
 
 # Prompt
-prompt = hub.pull("rlm/rag-prompt")
+prompt = PromptTemplate(
+    input_variables = ["context", "question"],
+    template = """
+You are an AI assistant specialized in answering questions based strictly on the provided context.
+- Be detailed and explanatory.
+- Only use information present in the context.
+- If the context does not contain enough information, reply with: "The answer is not available in the provided content."
+- Do not hallucinate.
+- Explain your reasoning step by step if the question is complex.
+- Use clear, professional language suitable for academic or research communication.
+
+Context:
+{context}
+
+Question:
+{question}
+
+Answer:
+"""
+)
 
 # Define State
 class State(TypedDict):

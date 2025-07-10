@@ -1,70 +1,96 @@
 # Spider ML Task 2
+
 ## AskMyPaper (Task 2 - A)
 
-**AskMyPaper** is an AI-based web application that allows users to ask research papers in natural language. Supported scholarly PDFs can be uploaded by the user, and the application uses Retrieval-Augmented Generation (RAG) to return contextual answers directly from the paper content.
+**AskMyPaper** is an AI-powered web application that allows users to interact with research papers in natural language. It employs Retrieval-Augmented Generation (RAG) to return contextual answers directly from scholarly PDFs.
+
+![AskMyPaper.png](AskMyPaper.png)
 
 ### Features
 
-- **Upload and parse scholarly PDF files from credible sources**
-- Automatically extracts and includes paper contents within a vector store
-- **Ask questions and get context-aware replies**
-  - Frontend typing-style animated responses
-  - Vue 3 Composition API frontend
-  - LangChain, Chroma, and Gemini/Google Generative AI-enabled FastAPI backend
-  - Axios and CORS integration
-  - Dark-themed responsive UI
+- Upload and parse credible research PDFs
+- Automatically embed paper chunks into a vector store (Chroma)
+- Ask questions and get accurate, source-backed answers
+- Animated frontend replies, responsive dark UI
+- Uses Vue 3 + FastAPI with Google Gemini & LangChain backend
 
-### Frontend
+### RAG Pipeline Overview
 
-- Composition API and Vue 3 based
-- Simulated typing effect for answers
-- Clean, minimal design using simple color variables
-
-### Backend
-
-- Built using **FastAPI** with proper CORS support
-- Uses **LangChain** for chaining language model tasks
-- Integrated with **Google Gemini 2.0 Flash**
-- Supports PDF parsing, chunking, and embedding into Chroma DB vector store
-- Async endpoints in **FastAPI** and **Axios-based** requests from the frontend
-- Quota exhaustion and retry error handling
-
-### RAG Pipeline
-
-- **PDF file parsing** into chunks
-- Chunks are injected with a vectorizer and placed within the **Chroma** vector store
-- Upon user query, the most applicable chunks are fetched
-- These chunks are fed into the **LLM** to provide a contextually aware answer
+1. PDF uploaded → parsed into clean chunks
+2. Chunks embedded and stored in **Chroma DB**
+3. User question triggers vector search
+4. Retrieved chunks are passed to **Gemini 2.0 Flash**
+5. Answer is generated with full context
 
 ### Tech Stack
 
-#### Frontend
+**Frontend**: Vue 3, Vite, Axios, CSS
+**Backend**: FastAPI, LangChain, Chroma, Gemini API
 
-- **Vue 3** using Composition API
-- **Axios** for HTTP requests
-- **Vite** as the build tool
-- **HTML/CSS** with scoped styling and theme control variables
+---
 
-#### Backend
+## Food-101 Image Classification (Task 2 - B)
 
-- **FastAPI** — fast async Python web framework for production
-- **LangChain** — for orchestration and retrieval of LLMs
-- **Chroma** — document embedding vector store
-- **Google Gemini 2.0 Flash** — employed for providing answers
-- **Uvicorn** — ASGI server for development
+This subtask involves training a deep CNN on the **Food-101** dataset, which includes 101 food categories and over 100K images. The aim is to classify food types with high visual variability.
 
-### Why Only Trusted Scholarly Domains?
+### Highlights
 
-To ensure reliability and quality, AskMyPaper permits PDF uploads only from very credible research repositories. This guarantees:
+- Trained with PyTorch using **ResNet-34**
+- Label smoothing + OneCycleLR scheduler
+- Clean architecture & logging
+- Achieved over **57% test accuracy** within 10 epochs
 
-- **High Content Quality**: Reputable domains (e.g., arXiv.org) offer structured, peer-reviewed, or preprint scholarly content.
-- **Format Consistency**: These domains employ conventional layouts that are simpler to parse and analyze efficiently.
-- **Less Noise**: Prohibiting generic PDFs or PDFs behind intricate HTML layers (such as those from ieeexplore.ieee.org) prevents parsing mistakes and irrelevant content ingestion.
-- **Scalable Validation**: Restricting accepted sources makes metadata validation and content extraction easier.
+### Final Performance: Food101_v1_ResNet34
 
-### Default 5 AskMyPaper's Research Papers:
-- Attention Is All You Need
-- BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding
-- GPT-3: Language Models are Few-Shot Learners
-- Contrastive Language-Image Pretraining with Knowledge Graphs
-- LLaMA: Open and Efficient Foundation Language Models
+| Epoch | Train Accuracy | Test Accuracy |
+|-------|----------------|----------------|
+| 10    | 86.12%         | **57.28%**     |
+
+---
+
+## News Category Classification (Task 2 - C)
+
+This task focuses on multi-class news classification from both the **headline** and **short description** of articles.
+
+### Model Architecture: DCAF-RNN
+
+**DCAF-RNN** stands for **Dual-Channel Attention Fusion Recurrent Neural Network**. It processes both the headline and description separately using a CNN + BiRNN pipeline, followed by cross-attention and gated fusion. Key elements:
+
+- **Embedding Layer** with projection
+- **CNN** for local feature extraction
+- **Bidirectional RNN (vanilla)** per input
+- **Cross Attention**: Headline attends to Description and vice versa
+- **Gated Fusion**: Learns how much to weigh headline vs description
+- **Final MLP Classifier** for multi-class output
+
+### Variants Trained for RNN:
+
+| Model Variant                 | Accuracy |
+|-------------------------------|----------|
+| DCAF-RNN (with class weights) | 54.71%   |
+| DCAF-RNN (without weights)    | 64.07% |
+| MLP Ensemble of both above    | **75.31%** |
+
+>The **ensemble** leveraged complementary learning from both models, demonstrating how gating and fusion improve class separation.
+
+---
+
+### Variants Trained for LSTM:
+
+| Model Variant                  | Accuracy   |
+|--------------------------------|------------|
+| DCAF-LSTM (with class weights) | 56.87%     |
+| DCAF-LSTM (without weights)    | 63.76%     |
+| MLP Ensemble of both above     | **64.36%** |
+
+>The DCAF-LSTM without weights outperformed DCAF-LSTM with weights in almost 35 categories. So The Ensembling was not as efficient as the RNN one where both the models covered the entire categories
+---
+
+### BERT:
+
+| Model Variant | Accuracy   |
+|---------------|------------|
+| TinyBERT      | **64.36%** |
+
+>TinyBERT was Used. DistilBERT or BERT Base would have performed significantly better. But due to computing deficiencies, Trained on TinyBERT
+---
